@@ -3,53 +3,44 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <script src="./node_modules/html5-qrcode/html5-qrcode.min.js"></script>
+    <title>QR Code Scanner</title>
+    <script src="https://cdn.jsdelivr.net/npm/html5-qrcode/minified/html5-qrcode.min.js"></script>
     <style>
-      main {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-      #reader {
-        width: 600px;
-      }
-      #result {
-        text-align: center;
-        font-size: 1.5rem;
+      #qr-reader {
+        width: 500px;
+        margin: 0 auto;
       }
     </style>
   </head>
   <body>
-    <h1>new page</h1>
-    <main>
-      <div id="reader"></div>
-      <div id="result"></div>
-    </main>
+    <h1>QR Code Scanner</h1>
+    <div id="qr-reader"></div>
+    <div id="qr-reader-results"></div>
 
     <script>
-      const scanner = new Html5QrcodeScanner("reader", {
-        qrbox: {
-          width: 250,
-          height: 250,
-        },
-        fps: 20,
+      document.addEventListener("DOMContentLoaded", function () {
+        function onScanSuccess(decodedText, decodedResult) {
+          // Handle the result here
+          console.log(`Code matched = ${decodedText}`, decodedResult);
+          document.getElementById(
+            "qr-reader-results"
+          ).innerText = `Code matched: ${decodedText}`;
+        }
+
+        function onScanFailure(error) {
+          // Handle scan failure, usually better to ignore and keep scanning.
+          console.warn(`Code scan error = ${error}`);
+        }
+
+        // Create a new instance of Html5QrcodeScanner
+        let html5QrcodeScanner = new Html5QrcodeScanner("qr-reader", {
+          fps: 10,
+          qrbox: 250,
+        });
+
+        // Start scanning
+        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
       });
-
-      scanner.render(success, error);
-      function success(result) {
-        console.log(result);
-        document.getElementById("result").innerHTML = `
-         <h1>Success!</h1>
-         <p>${result}</p>
-        `;
-
-        scanner.clear();
-        // document.getElementById('reader').remove();
-      }
-      function error(error) {
-        console.error(error);
-      }
     </script>
   </body>
 </html>
